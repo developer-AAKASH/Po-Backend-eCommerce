@@ -27,9 +27,11 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup( swaggerDocument ));
 
 // Routers...
 const homeRoutes = require("./routes/home");
+const userRoutes = require("./routes/user");
 
 // Router middlewares...
 app.use("/api/v1", homeRoutes );
+app.use("/api/v1", userRoutes );
 
 // export app js
 module.exports = app;
