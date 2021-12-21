@@ -59,7 +59,7 @@ UserSchema.pre('save', async function ( next ) {
         return next();
     }
 
-    this.password = await bcrypt.hash( this.password, process.env.SALT_ROUND );
+    this.password = await bcrypt.hash( this.password, parseInt( process.env.SALT_ROUND ) );
 });
 
 // Methods...........
@@ -70,6 +70,20 @@ UserSchema.methods.isRightPassword = async function ( userSendPassword ) {
 
 // Create and Return JWT token
 UserSchema.methods.getJWTToken = async function () {
+    const token = await jwt.sign({
+        id: this._id
+    },
+    process.env.JWT_SECRET,
+    {
+        expiresIn: process.env.JWT_EXPIRY
+    });
+
+    console.log("Token Generated:::::::::::", token );
+
+    return token;
+};
+/*
+UserSchema.methods.getJWTToken = async function () {
     return jwt.sign({
         id: this._id,
         // email: this.email // and can be mudh more field addedd...
@@ -78,7 +92,8 @@ UserSchema.methods.getJWTToken = async function () {
     {
         expiresIn: process.env.JWT_EXPIRY
     });
-}
+};
+*/
 
 // Generate Forgot/Reset password token...basically a string...
 UserSchema.methods.getResetpasswordToken = function (params) {
