@@ -78,7 +78,7 @@ UserSchema.methods.getJWTToken = async function () {
         expiresIn: process.env.JWT_EXPIRY
     });
 
-    console.log("Token Generated:::::::::::", token );
+    // console.log("Token Generated:::::::::::", token );
 
     return token;
 };
@@ -104,7 +104,8 @@ UserSchema.methods.getResetpasswordToken = function (params) {
     this.resetPasswordToken = crypto.createHash( "sha256" ).update(resetToken).digest("hex");
 
     // Time of token...
-    this.resetPasswordExpiry = Date.now() + process.env.RESET_PASSWORD_EXPIRY;
+    // this.resetPasswordExpiry = Date.now() + process.env.RESET_PASSWORD_EXPIRY;
+    this.resetPasswordExpiry = Date.now() + 20 * 60 * 1000;
 
     return resetToken;
 }
