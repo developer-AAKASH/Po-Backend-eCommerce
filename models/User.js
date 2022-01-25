@@ -35,7 +35,6 @@ const UserSchema = new mongoose.Schema({
         securedURL: {
             type: String, 
             required: true,
-
         }
     },
     resetPasswordToken: {
@@ -48,7 +47,6 @@ const UserSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
-
 });
 
 // Encrypt Password before save...
@@ -58,7 +56,6 @@ UserSchema.pre('save', async function ( next ) {
     if( !this.isModified("password") ){
         return next();
     }
-
     this.password = await bcrypt.hash( this.password, parseInt( process.env.SALT_ROUND ) );
 });
 
@@ -77,9 +74,7 @@ UserSchema.methods.getJWTToken = async function () {
     {
         expiresIn: process.env.JWT_EXPIRY
     });
-
     // console.log("Token Generated:::::::::::", token );
-
     return token;
 };
 /*
@@ -94,7 +89,6 @@ UserSchema.methods.getJWTToken = async function () {
     });
 };
 */
-
 // Generate Forgot/Reset password token...basically a string...
 UserSchema.methods.getResetpasswordToken = function (params) {
     // Generate a long and random stirng....

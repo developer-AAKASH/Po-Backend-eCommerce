@@ -2,6 +2,7 @@ const User = require("../models/User");
 const CustomError = require("../utils/CustomError");
 const BigPromise = require("./bigPromise");
 const jwt = require("jsonwebtoken");
+const { request } = require("express");
 
 exports.isSignedIn = BigPromise( async( request, response, next )=>{
     const token = request.cookies.token || request.header("Authorization").replace("Bearer ", "");
@@ -18,3 +19,16 @@ exports.isSignedIn = BigPromise( async( request, response, next )=>{
 
     next();
 });
+
+exports.isRoleMatching = (...roles)=>{
+    return( request, response, next )=>{
+        if( !roles.includes( request.user.role ) ){
+            return next( new CustomError("You are not allowed for this resource", 403 ) );
+        }
+        next();
+    }
+
+    // if( request.user.role === "admin" ){
+    //     next();
+    // }
+};

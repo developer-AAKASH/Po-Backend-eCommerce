@@ -9,10 +9,15 @@ const {
     resetPassword,
     getLoggedInUserDetails,
     changeUserPassword,
-    updateUser
+    updateUser,
+    adminGetAllUsers,
+    adminGetOneUser,
+    adminUpdateOneUser,
+    adminDeleteOneUser,
+    managerGetAllUsers
 } = require("../controllers/UserController");
 
-const { isSignedIn } = require("../middlewares/user");
+const { isSignedIn, isRoleMatching } = require("../middlewares/user");
 
 router.route("/signup").post( signUp );
 
@@ -29,5 +34,15 @@ router.route("/userdashboard").get( isSignedIn, getLoggedInUserDetails );
 router.route("/password/update").post( isSignedIn, changeUserPassword );
 
 router.route("/userdashboard/update").post( isSignedIn, updateUser );
+
+// Admin specific routes.
+router.route("/admin/users").get( isSignedIn, isRoleMatching("Admin"), adminGetAllUsers );
+router.route("/admin/user/:userId")
+    .get( isSignedIn, isRoleMatching("Admin"), adminGetOneUser )
+    .put( isSignedIn, isRoleMatching("Admin"), adminUpdateOneUser )
+    .delete( isSignedIn, isRoleMatching("Admin"), adminDeleteOneUser );
+
+// Manager specific routes.
+router.route("/manager/users").get( isSignedIn, isRoleMatching("Manager"), managerGetAllUsers );
 
 module.exports = router;

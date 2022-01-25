@@ -235,3 +235,74 @@ exports.updateUser = BigPromise( async( request, response, next )=>{
         user
     });
 });
+
+exports.adminGetOneUser = BigPromise( async( request, response, next )=>{
+    const user = await User.findById( request.params.userId );
+
+    if( !user ){
+        next( new CustomError("No User found", 400 ));
+    }
+
+    response.status(200).json({
+        success: true,
+        user
+    });
+});
+
+exports.adminGetAllUsers = BigPromise( async( request, response, next )=>{
+    const users = await User.find();
+    
+    response.status(200).json({
+        success: true,
+        users
+    });
+});
+
+exports.adminUpdateOneUser = BigPromise( async( request, response, next )=>{
+    const newData = {
+        userName: request.body.userName,
+        email: request.body.email,
+        role: request.body.role
+    };
+
+    const userId = request.params.userId;
+
+    const user = await User.findByIdAndUpdate( userId, newData, {
+        new: true,
+        runValidators: true,
+        useFindAndModify: false
+    });
+
+    response.status(200).json({
+        success: true,
+        user
+    });
+});
+
+exports.adminDeleteOneUser = BigPromise( async( request, response, next )=>{
+    const user = await User.findById( userId );
+
+    if( !user ){
+        return next( new CustomError("No such User exist !! ", 401 ) );
+    } 
+
+    const userImageId = user.photo.id;
+
+    await cloudinary.v2.uploader.destroy( userImageId );
+
+    await user.remove();
+
+    response.status(200).json({
+        success: true,
+        message: "User deleted Succesfuly !!"
+    })
+});
+
+exports.managerGetAllUsers = BigPromise( async( request, response, next )=>{
+    const users = await User.find({ role: "User" });
+
+    response.status(200).json({
+        success: true,
+        users
+    });
+});
